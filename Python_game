@@ -1,0 +1,40 @@
+print("hello")  # just for checking error :)
+
+import pygame, sys, os  # this  libraries which are very very important in the game development in python
+# for python games we have to import some specific libraries
+from pygame.locals import *  # this is use to load the constants of the pygame
+
+# to initialize the python library we will use
+pygame.init()
+
+# to create the screen
+game_screen = pygame.display.set_mode((800, 600))  # varaible name game_screen with predefined functions
+
+# while True:   # condition for the infinite loop and for the program to run infinitely mainly for the
+# now we will change the caption of the window in the game
+# title
+pygame.display.set_caption("SpaceWar")  # now the title of the game will be space war
+game_icon = pygame.image.load('C:/workspace/Python_Game/Python_Games/war.png')  # to add icon to our game window
+pygame.display.set_icon(game_icon)
+# the spaceship who the player will control
+spaceshipImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/spaceship.png")
+spaceshipX = 250
+spaceshipY = 400
+
+
+def spaceship():
+    game_screen.blit('spaceshipX', True, (spaceshipX, spaceshipY))
+
+
+running_screen = True
+while running_screen:
+
+    # to add color to the window
+    # will choose RGB = 'Red','Green','Blue'
+    game_screen.fill((100, 123, 232))
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # NOW WE HAVE APPLIED A CONDITION THE SCREEN WILL remove after the quit
+            running_screen = True  # that means when we will click on the close bar in the game window
+
+    spaceshipImg()
+    pygame.display.update()
