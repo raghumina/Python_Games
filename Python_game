@@ -3,6 +3,7 @@ print("hello")  # just for checking error :)
 import pygame, sys, os  # this  libraries which are very very important in the game development in python
 # for python games we have to import some specific libraries
 from pygame.locals import *  # this is use to load the constants of the pygame
+import random
 
 # to initialize the python library we will use
 pygame.init()
@@ -23,19 +24,31 @@ pygame.display.set_icon(game_icon)
 spaceshipImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/spaceship.png")
 spaceshipX = 370  # they are the coordinates which specifies the location of the spaceship on the surface
 spaceshipY = 480  # coordinate x and y
+spaceshipX_change = 0
+
+# monster or the enemy in the game
+
+monsterImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/monster.png")
+monsterX = random.randint(0, 800)  # use random because we want in on random places
+monsterY = random.randint(40, 150)
+monsterX_change = 0.3
+mosterY_change = 0
 
 
 def spaceship(x, y):
     game_screen.blit(spaceshipImg, (x, y))
 
 
+def monster(x, y):
+    game_screen.blit(monsterImg, (x, y))
+
+# the surface loop
 running_screen = True
 while running_screen:
 
     # to add color to the window
     # will choose RGB = 'Red','Green','Blue'
-    game_screen.fill((0, 0, 0))  # this is the background of the surface
-
+    game_screen.fill((200, 0, 0))  # this is the background of the surface
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # NOW WE HAVE APPLIED A CONDITION THE SCREEN WILL remove after the quit
@@ -44,13 +57,27 @@ while running_screen:
         # check weather a key is pressed or not ( left and right side key )
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                print("left key is pressed")
+                spaceshipX_change = -1
+
             if event.key == pygame.K_RIGHT:
-                print("right key is pressed ")
+                spaceshipX_change = 1
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                print("the key is released ")
+                spaceshipX_change = 0
 
+    spaceshipX += spaceshipX_change
+    if spaceshipX <= 0:
+        spaceshipX = 0
+    elif spaceshipX >= 736:
+        spaceshipX = 736
 
+    monsterX += monsterX_change
+    if monsterX <= 0:
+        monsterX = 0
+    elif monsterX >= 736:
+        monsterX = 736
+        
     spaceship(spaceshipX, spaceshipY)
+    monster(monsterX, monsterY)
     pygame.display.update()
