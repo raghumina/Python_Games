@@ -1,4 +1,4 @@
-print("hello")  # just for checking error :)
+print("hello")  # just for checking error :):):)
 
 import pygame, sys, os  # this  libraries which are very very important in the game development in python
 # for python games we have to import some specific libraries
@@ -35,8 +35,17 @@ spaceshipX_change = 6
 monsterImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/monster.png")
 monsterX = random.randint(0, 800)  # use random because we want in on random places
 monsterY = random.randint(40, 150)
-monsterX_change = 4
+monsterX_change = 3
 mosterY_change = 40
+
+# bullet
+
+bombImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/bomb.png")
+bombX = 0
+bombY = 480
+bombX_change = 0
+bombY_change = 10
+bomb_state = 'ready '
 
 
 def spaceship(x, y):
@@ -45,6 +54,12 @@ def spaceship(x, y):
 
 def monster(x, y):
     game_screen.blit(monsterImg, (x, y))
+
+
+def bomb_fire(x, y):
+    global bomb_state
+    bomb_state = "fire"
+    game_screen.blit(bombImg, (x + 16, y + 10))  # that the bomb comes from the spaceship
 
 
 # the surface loop
@@ -56,7 +71,7 @@ while running_screen:
     game_screen.fill((200, 0, 0))  # this is the background of the surface
 
     # background image
-    game_screen.blit(background, (0,0))
+    game_screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  # NOW WE HAVE APPLIED A CONDITION THE SCREEN WILL remove after the quit
@@ -65,10 +80,13 @@ while running_screen:
         # check weather a key is pressed or not ( left and right side key )
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                spaceshipX_change = -1
+                spaceshipX_change = -5
 
             if event.key == pygame.K_RIGHT:
-                spaceshipX_change = 1
+                spaceshipX_change = 5
+
+            if event.type == pygame.K_SPACE:
+                bomb_fire(spaceshipX, bombY)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -76,18 +94,23 @@ while running_screen:
     # checking the boundries of the spaceship  so it remains in surface
     spaceshipX += spaceshipX_change
     if spaceshipX <= 0:
-        spaceshipX = 6
+        spaceshipX = 0
     elif spaceshipX >= 736:
         spaceshipX = 736
 
     # checking the boundries of the monster in the surface
     monsterX += monsterX_change
     if monsterX <= 0:
-        monsterX_change = 4
+        monsterX_change = 3
         monsterY += mosterY_change
     elif monsterX >= 736:
-        monsterX = -4
+        monsterX = -3
         monsterY += mosterY_change
+
+    # Bomb movement
+    if bomb_state is "fire":
+        bomb_fire(spaceshipX, bombY)
+        bombY -= bombY_change
 
     spaceship(spaceshipX, spaceshipY)
     monster(monsterX, monsterY)
