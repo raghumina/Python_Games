@@ -1,117 +1,184 @@
-print("hello")  # just for checking error :):):)
 
-import pygame, sys, os  # this  libraries which are very very important in the game development in python
-# for python games we have to import some specific libraries
-from pygame.locals import *  # this is use to load the constants of the pygame
+import math
 import random
 
-# to initialize the python library we will use
+import pygame
+from pygame import mixer
+
+# Intialize the pygame
 pygame.init()
 
-# to create the screen
-# also known as surface in the gaming term
-game_screen = pygame.display.set_mode((800, 600))  # variable name game_screen with predefined functions
-# 800 ,600 are the length and breadth of the surface
-# while True:   # condition for the infinite loop and for the program to run infinitely mainly for the
+# create the screen
+screen = pygame.display.set_mode((800, 600))
 
-# background
-background = pygame.image.load('C:/workspace/Python_Game/Python_Games/background.png')
+# Background
+background = pygame.image.load('background.png')
 
-# now we will change the caption of the window in the game
-# title
-pygame.display.set_caption("SpaceWar")  # now the title of the game will be space war
-game_icon = pygame.image.load('C:/workspace/Python_Game/Python_Games/war.png')  # to add icon to our game window
-pygame.display.set_icon(game_icon)
+# Sound
+mixer.music.load("background.wav")
+mixer.music.play(-1)
 
-# the spaceship who the player will control
-# player
-spaceshipImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/spaceship.png")
-spaceshipX = 370  # they are the coordinates which specifies the location of the spaceship on the surface
-spaceshipY = 480  # coordinate x and y
-spaceshipX_change = 6
+# Caption and Icon
+pygame.display.set_caption("Space Invader")
+icon = pygame.image.load('ufo.png')
+pygame.display.set_icon(icon)
 
-# monster or the enemy in the game
+# Player
+playerImg = pygame.image.load('player.png')
+playerX = 370
+playerY = 480
+playerX_change = 0
 
-monsterImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/monster.png")
-monsterX = random.randint(0, 800)  # use random because we want in on random places
-monsterY = random.randint(40, 150)
-monsterX_change = 3
-mosterY_change = 40
+# Enemy
+enemyImg = []
+enemyX = []
+enemyY = []
+enemyX_change = []
+enemyY_change = []
+num_of_enemies = 6
 
-# bullet
+for i in range(num_of_enemies):
+    enemyImg.append(pygame.image.load('enemy.png'))
+    enemyX.append(random.randint(0, 736))
+    enemyY.append(random.randint(50, 150))
+    enemyX_change.append(4)
+    enemyY_change.append(40)
 
-bombImg = pygame.image.load("C:/workspace/Python_Game/Python_Games/bomb.png")
-bombX = 0
-bombY = 480
-bombX_change = 0
-bombY_change = 10
-bomb_state = 'ready '
+# Bullet
+
+# Ready - You can't see the bullet on the screen
+# Fire - The bullet is currently moving
+
+bulletImg = pygame.image.load('bullet.png')
+bulletX = 0
+bulletY = 480
+bulletX_change = 0
+bulletY_change = 10
+bullet_state = "ready"
+
+# Score
+
+score_value = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+
+textX = 10
+testY = 10
+
+# Game Over
+over_font = pygame.font.Font('freesansbold.ttf', 64)
 
 
-def spaceship(x, y):
-    game_screen.blit(spaceshipImg, (x, y))
+def show_score(x, y):
+    score = font.render("Score : " + str(score_value), True, (255, 255, 255))
+    screen.blit(score, (x, y))
 
 
-def monster(x, y):
-    game_screen.blit(monsterImg, (x, y))
+def game_over_text():
+    over_text = over_font.render("GAME OVER", True, (255, 255, 255))
+    screen.blit(over_text, (200, 250))
 
 
-def bomb_fire(x, y):
-    global bomb_state
-    bomb_state = "fire"
-    game_screen.blit(bombImg, (x + 16, y + 10))  # that the bomb comes from the spaceship
+def player(x, y):
+    screen.blit(playerImg, (x, y))
 
 
-# the surface loop
-running_screen = True
-while running_screen:
+def enemy(x, y, i):
+    screen.blit(enemyImg[i], (x, y))
 
-    # to add color to the window
-    # will choose RGB = 'Red','Green','Blue'
-    game_screen.fill((200, 0, 0))  # this is the background of the surface
 
-    # background image
-    game_screen.blit(background, (0, 0))
+def fire_bullet(x, y):
+    global bullet_state
+    bullet_state = "fire"
+    screen.blit(bulletImg, (x + 16, y + 10))
 
+
+def isCollision(enemyX, enemyY, bulletX, bulletY):
+    distance = math.sqrt(math.pow(enemyX - bulletX, 2) + (math.pow(enemyY - bulletY, 2)))
+    if distance < 27:
+        return True
+    else:
+        return False
+
+
+# Game Loop
+running = True
+while running:
+
+    # RGB = Red, Green, Blue
+    screen.fill((0, 0, 0))
+    # Background Image
+    screen.blit(background, (0, 0))
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # NOW WE HAVE APPLIED A CONDITION THE SCREEN WILL remove after the quit
-            running_screen = False  # that means when we will click on the close bar in the game window
-        # adding compatiblity with keyboard
-        # check weather a key is pressed or not ( left and right side key )
+        if event.type == pygame.QUIT:
+            running = False
+
+        # if keystroke is pressed check whether its right or left
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                spaceshipX_change = -5
-
+                playerX_change = -5
             if event.key == pygame.K_RIGHT:
-                spaceshipX_change = 5
-
-            if event.type == pygame.K_SPACE:
-                bomb_fire(spaceshipX, bombY)
+                playerX_change = 5
+            if event.key == pygame.K_SPACE:
+                if bullet_state is "ready":
+                    bulletSound = mixer.Sound("laser.wav")
+                    bulletSound.play()
+                    # Get the current x cordinate of the spaceship
+                    bulletX = playerX
+                    fire_bullet(bulletX, bulletY)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                spaceshipX_change = 0
-    # checking the boundries of the spaceship  so it remains in surface
-    spaceshipX += spaceshipX_change
-    if spaceshipX <= 0:
-        spaceshipX = 0
-    elif spaceshipX >= 736:
-        spaceshipX = 736
+                playerX_change = 0
 
-    # checking the boundries of the monster in the surface
-    monsterX += monsterX_change
-    if monsterX <= 0:
-        monsterX_change = 3
-        monsterY += mosterY_change
-    elif monsterX >= 736:
-        monsterX = -3
-        monsterY += mosterY_change
+    # 5 = 5 + -0.1 -> 5 = 5 - 0.1
+    # 5 = 5 + 0.1
 
-    # Bomb movement
-    if bomb_state is "fire":
-        bomb_fire(spaceshipX, bombY)
-        bombY -= bombY_change
+    playerX += playerX_change
+    if playerX <= 0:
+        playerX = 0
+    elif playerX >= 736:
+        playerX = 736
 
-    spaceship(spaceshipX, spaceshipY)
-    monster(monsterX, monsterY)
+    # Enemy Movement
+    for i in range(num_of_enemies):
+
+        # Game Over
+        if enemyY[i] > 440:
+            for j in range(num_of_enemies):
+                enemyY[j] = 2000
+            game_over_text()
+            break
+
+        enemyX[i] += enemyX_change[i]
+        if enemyX[i] <= 0:
+            enemyX_change[i] = 4
+            enemyY[i] += enemyY_change[i]
+        elif enemyX[i] >= 736:
+            enemyX_change[i] = -4
+            enemyY[i] += enemyY_change[i]
+
+        # Collision
+        collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
+        if collision:
+            explosionSound = mixer.Sound("explosion.wav")
+            explosionSound.play()
+            bulletY = 480
+            bullet_state = "ready"
+            score_value += 1
+            enemyX[i] = random.randint(0, 736)
+            enemyY[i] = random.randint(50, 150)
+
+        enemy(enemyX[i], enemyY[i], i)
+
+    # Bullet Movement
+    if bulletY <= 0:
+        bulletY = 480
+        bullet_state = "ready"
+
+    if bullet_state is "fire":
+        fire_bullet(bulletX, bulletY)
+        bulletY -= bulletY_change
+
+    player(playerX, playerY)
+    show_score(textX, testY)
     pygame.display.update()
