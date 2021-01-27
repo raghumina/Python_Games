@@ -4,10 +4,10 @@ A video game where a player controls a spaceship and defends itself from collisi
 # Space War game is based on Space Invaders game 
 Space invaders Galaxy Retro is a fun shooting game for kids and adults. Our planet is under attack and you need to defend it. Have fun playing Space Invaders Galaxy, the online game! android, html5, mobile, shoot, shoot-em-up, shooter, shootout, spaceship, invaders
 
-# Programming Language, Tech used:
-# Programming language: Python, www.python.org
-# Python Modules and Libraries used: Pygame, Random, Math
-# Tool used: Visual Studio Code
+ Programming Language, Tech used:
+ Programming language: Python, www.python.org
+ Python Modules and Libraries used: Pygame, Random, Math
+ Tool used: Visual Studio Code
 Important links: www.python.org, www.pygame.org
 
 ## Game Snapshots 
